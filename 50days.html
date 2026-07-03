@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>우리의 50일</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FBF4EC;
+    --blush:#F3DADD;
+    --rose:#C97F8C;
+    --rose-dark:#8C5560;
+    --ink:#4A3B3E;
+    --ink-soft:#8A7A7D;
+    --sage:#B7BFA0;
+    --card-shadow: 0 18px 40px rgba(140, 85, 96, 0.18);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(243,218,221,0.55), transparent 40%),
+      radial-gradient(circle at 85% 80%, rgba(183,191,160,0.25), transparent 45%),
+      var(--cream);
+    font-family:'Gowun Batang', serif;
+    color:var(--ink);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:48px 20px 80px;
+    overflow-x:hidden;
+  }
+  .header{
+    text-align:center;
+    margin-bottom:34px;
+  }
+  .header .eyebrow{
+    font-family:'Gaegu', sans-serif;
+    font-size:15px;
+    color:var(--rose-dark);
+    letter-spacing:2px;
+    margin-bottom:6px;
+  }
+  .header h1{
+    font-family:'Gaegu', sans-serif;
+    font-weight:700;
+    font-size:34px;
+    margin:0;
+    color:var(--ink);
+  }
+  .header p{
+    font-size:14px;
+    color:var(--ink-soft);
+    margin:10px 0 0;
+  }
+
+  .deck-wrap{
+    position:relative;
+    width:min(380px, 88vw);
+    height:520px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    touch-action:pan-y;
+  }
+  .card{
+    position:absolute;
+    width:100%;
+    height:100%;
+    background:#fff;
+    border-radius:18px;
+    box-shadow:var(--card-shadow);
+    padding:38px 30px 30px;
+    display:flex;
+    flex-direction:column;
+    cursor:grab;
+    user-select:none;
+    transition:transform 0.35s cubic-bezier(.25,.8,.35,1), opacity 0.35s ease;
+    border:1px solid rgba(201,127,140,0.15);
+  }
+  .card:active{cursor:grabbing;}
+  .card.dragging{transition:none;}
+
+  .tape{
+    position:absolute;
+    top:-14px;
+    left:50%;
+    width:90px;
+    height:28px;
+    background:var(--blush);
+    opacity:0.85;
+    transform:translateX(-50%) rotate(-3deg);
+    box-shadow:0 2px 4px rgba(0,0,0,0.06);
+  }
+
+  .card-date{
+    font-family:'Gaegu', sans-serif;
+    font-size:16px;
+    color:var(--rose-dark);
+    font-weight:700;
+    margin-bottom:4px;
+  }
+  .card-tag{
+    font-size:12px;
+    color:var(--ink-soft);
+    margin-bottom:20px;
+    letter-spacing:0.5px;
+  }
+  .card-quote{
+    flex:1;
+    display:flex;
+    align-items:center;
+    font-size:19px;
+    line-height:1.75;
+    color:var(--ink);
+  }
+  .card-quote::before{
+    content:'\201C';
+    font-family:'Gaegu', sans-serif;
+    font-size:46px;
+    color:var(--blush);
+    display:block;
+    line-height:0.5;
+    margin-bottom:14px;
+  }
+  .card-footer{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:20px;
+    font-family:'Gaegu', sans-serif;
+    font-size:13px;
+    color:var(--sage);
+  }
+
+  .controls{
+    display:flex;
+    align-items:center;
+    gap:22px;
+    margin-top:36px;
+  }
+  .nav-btn{
+    width:46px;
+    height:46px;
+    border-radius:50%;
+    border:1px solid var(--blush);
+    background:#fff;
+    color:var(--rose-dark);
+    font-size:20px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    box-shadow:0 4px 10px rgba(140,85,96,0.1);
+    transition:transform 0.15s ease;
+  }
+  .nav-btn:hover{transform:scale(1.08);}
+  .nav-btn:active{transform:scale(0.95);}
+
+  .dots{
+    display:flex;
+    gap:7px;
+  }
+  .dot{
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:var(--blush);
+    transition:all 0.25s ease;
+  }
+  .dot.active{
+    background:var(--rose);
+    width:20px;
+    border-radius:4px;
+  }
+
+  .counter{
+    margin-top:14px;
+    font-family:'Gaegu', sans-serif;
+    font-size:14px;
+    color:var(--ink-soft);
+  }
+
+  .hint{
+    margin-top:26px;
+    font-size:12px;
+    color:var(--ink-soft);
+    opacity:0.7;
+  }
+
+  @media (max-width:420px){
+    .header h1{font-size:28px;}
+    .card-quote{font-size:17px;}
+  }
+</style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="eyebrow">D + 50</div>
+    <h1>우리가 쌓아온 순간들</h1>
+    <p>내 일기 속에 남아있던, 너와 함께한 가장 예뻤던 장면들</p>
+  </div>
+
+  <div class="deck-wrap" id="deckWrap"></div>
+
+  <div class="controls">
+    <button class="nav-btn" id="prevBtn" aria-label="이전 카드">‹</button>
+    <div class="dots" id="dots"></div>
+    <button class="nav-btn" id="nextBtn" aria-label="다음 카드">›</button>
+  </div>
+  <div class="counter" id="counter"></div>
+  <div class="hint">카드를 좌우로 밀어보세요</div>
+
+<script>
+const entries = [
+  { date: "5/19", tag: "우리가 처음 만난 날", text: "같은 지하철을 타고 가면서 대화를 나누다가, 헤어질 때 손을 살짝 댔다. 서로 이렇게 불꽃이 튄 건 진짜 오랜만이라 설렜다." },
+  { date: "5/19", tag: "그날의 기억", text: "사진 속 모습이 실물을 다 담지 못했다. 이 사람은 실물에서 오는 아우라가 있다. 내가 그 아우라가 담기게 사진을 찍어주고 싶다." },
+  { date: "5/21", tag: "두 번째 만남", text: "많은 얘기를 했는데, 아직도 기억에 남는 건 처음부터 내가 좋았다는 말이었다." },
+  { date: "5/21", tag: "설렘의 시작", text: "헤어질 때쯤 번호를 받아갔다. 집 가면서 전화도 했다. 서로의 호감을 솔직히 이미 다 확인했다." },
+  { date: "5/23", tag: "고백한 날", text: "저녁을 먹고 한참 얘기를 하며 서로의 마음을 계속 확인했다." },
+  { date: "5/23", tag: "그 말 한마디", text: "서로 마음 있는 거 확인했으면 바로 만나도 되는 거 아니냐는 말을 듣고, 그제서야 이해가 됐다." },
+  { date: "5/26", tag: "우리가 사귀기 시작한 날", text: "오빠 나한테 관심 있는 거 이제 좀 확신이 든다, 믿음이 간다고 했다. 그리고 분위기를 잡고 바로 고백해버렸다." },
+  { date: "5/26", tag: "그날 밤", text: "헤어질 때 살짝 손만 잡고 헤어졌는데, 쓰면서도 설레긴 한다." },
+  { date: "5/26", tag: "앞으로의 다짐", text: "기말고사 끝나자마자 한강도 가고, 방탈출 카페도 가고, 워터파크도 가고 다 하고 싶다." },
+  { date: "5/28", tag: "우리의 첫 데이트", text: "화요일 밤은 달콤했다. 22년 인생에서 손에 꼽는 날이었다. 그녀가 내 어깨에 머리를 기대고, 우산을 들고 있는 내 손에 살포시 그녀의 손이 올라왔을 땐 머리가 하얘졌다." },
+  { date: "5/28", tag: "그날의 마음", text: "기말고사를 끝내버리고 싶다는 생각보다, 시험이 끝나지 않았으면 좋겠다는 생각을 한다." },
+  { date: "5/28", tag: "행복", text: "그냥 나를 이렇게 좋아해주는 사람이 있는 것이 너무 행복하다. 나의 일상에도 너무 큰 힘이 된다." },
+  { date: "6/2", tag: "손을 잡으며", text: "여자친구 손 느낌이 너무 좋다. 엄청 작고 귀엽다. 부드럽기도 하다." },
+  { date: "6/2", tag: "긴 통화", text: "오래 전화했다는 것이 나에겐 친밀함이 쌓였다는 표시로 받아들여졌다. 뿌듯하고도 좋았다." },
+  { date: "6/2", tag: "만날수록", text: "만날수록 좋다는 것이다. 나의 배려와 그런 생각들을 알아주고 고마워해준다." },
+  { date: "6/2", tag: "예쁘다", text: "그냥 얼굴을 보면 너무 좋다. 계속 보고 싶고 매력적이다." },
+  { date: "6/2", tag: "우리가 되어가는 것", text: "손을 잡고 있으면서도 더더욱 단단해지는, 나의 반을 찾은 것 같은 느낌이 들었다." },
+  { date: "6/2", tag: "신기한 우연", text: "신기하게도 일기를 쓰는 날마다 여자친구를 만나게 된다." },
+  { date: "6/4", tag: "소중함을 느끼며", text: "지금 여자친구가 얼마나 성격이 좋은지 새삼 깨닫게 되었다. 더욱더 소중함을 느끼게 된 순간인 거 같다." },
+];
+
+const deckWrap = document.getElementById('deckWrap');
+const dotsWrap = document.getElementById('dots');
+const counterEl = document.getElementById('counter');
+let current = 0;
+let startX = 0, currentX = 0, dragging = false;
+
+function buildCard(entry, offset){
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `
+    <div class="tape"></div>
+    <div class="card-date">${entry.date}</div>
+    <div class="card-tag">${entry.tag}</div>
+    <div class="card-quote">${entry.text}</div>
+    <div class="card-footer"><span>50 days</span><span>&hearts;</span></div>
+  `;
+  positionCard(card, offset);
+  return card;
+}
+
+function positionCard(card, offset){
+  if(offset === 0){
+    card.style.transform = 'translateX(0) rotate(0deg) scale(1)';
+    card.style.zIndex = 3;
+    card.style.opacity = 1;
+  } else if(offset === 1){
+    card.style.transform = 'translateX(18px) rotate(4deg) scale(0.95)';
+    card.style.zIndex = 2;
+    card.style.opacity = 0.7;
+  } else if(offset === -1){
+    card.style.transform = 'translateX(-18px) rotate(-4deg) scale(0.95)';
+    card.style.zIndex = 2;
+    card.style.opacity = 0.7;
+  } else {
+    card.style.transform = 'translateX(0) scale(0.9)';
+    card.style.zIndex = 1;
+    card.style.opacity = 0;
+  }
+}
+
+function render(){
+  deckWrap.innerHTML = '';
+  const prevIdx = (current - 1 + entries.length) % entries.length;
+  const nextIdx = (current + 1) % entries.length;
+
+  if(entries.length > 2){
+    deckWrap.appendChild(buildCard(entries[prevIdx], -1));
+  }
+  if(entries.length > 1){
+    deckWrap.appendChild(buildCard(entries[nextIdx], 1));
+  }
+  const activeCard = buildCard(entries[current], 0);
+  attachDrag(activeCard);
+  deckWrap.appendChild(activeCard);
+
+  renderDots();
+  counterEl.textContent = `${current + 1} / ${entries.length}`;
+}
+
+function renderDots(){
+  dotsWrap.innerHTML = '';
+  entries.forEach((_, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'dot' + (i === current ? ' active' : '');
+    dotsWrap.appendChild(dot);
+  });
+}
+
+function next(){
+  current = (current + 1) % entries.length;
+  render();
+}
+function prev(){
+  current = (current - 1 + entries.length) % entries.length;
+  render();
+}
+
+function attachDrag(card){
+  const onDown = (x) => { dragging = true; startX = x; currentX = x; card.classList.add('dragging'); };
+  const onMove = (x) => {
+    if(!dragging) return;
+    currentX = x;
+    const dx = currentX - startX;
+    card.style.transform = `translateX(${dx}px) rotate(${dx/20}deg)`;
+  };
+  const onUp = () => {
+    if(!dragging) return;
+    dragging = false;
+    card.classList.remove('dragging');
+    const dx = currentX - startX;
+    if(dx < -70){ next(); }
+    else if(dx > 70){ prev(); }
+    else { positionCard(card, 0); }
+  };
+
+  card.addEventListener('mousedown', (e) => onDown(e.clientX));
+  window.addEventListener('mousemove', (e) => onMove(e.clientX));
+  window.addEventListener('mouseup', onUp);
+
+  card.addEventListener('touchstart', (e) => onDown(e.touches[0].clientX), {passive:true});
+  card.addEventListener('touchmove', (e) => onMove(e.touches[0].clientX), {passive:true});
+  card.addEventListener('touchend', onUp);
+}
+
+document.getElementById('nextBtn').addEventListener('click', next);
+document.getElementById('prevBtn').addEventListener('click', prev);
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'ArrowRight') next();
+  if(e.key === 'ArrowLeft') prev();
+});
+
+render();
+</script>
+</body>
+</html>
